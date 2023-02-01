@@ -1,0 +1,30 @@
+create database supermarket;
+
+use supermarket;
+
+
+create table productdetails
+(pcode    int(5)    primary key,
+pname    char(30),
+pqty int(5),
+pprice   decimal(12,2),
+pprofit  int(2),
+psprice  decimal(12,2),
+vcode    char(5)); 
+
+create table vendordetails
+(vcode    char(5) primary key,
+vname    char(30),
+vphone   int(15),
+vaddress char(40),
+vpcode    int(5),
+vpqty int(5));
+
+create table bill
+(bcode int(5),
+bdate date,
+bpcode int(5) references productdetails(pcode),
+bpname char(30),
+bprice decimal(12,2),
+bqty int(5),
+btot decimal(12,2));
