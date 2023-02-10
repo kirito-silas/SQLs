@@ -1,0 +1,43 @@
+select name,population,area from world where population > 25000000 or area >3000000;
+select product_id from products where low_fats='Y' and recyclable='Y';
+
+SELECT name from Customer where referee_id != 2 or referee_id is null;
+
+select name as Customers from Customers where id not in (select customerid from orders)
+
+select player_id, event_date as first_login from activity group by player_id order by event_date;
+
+select name from salesperson where sales_id not in
+ (select sales_id from orders left join company on orders.com_id = company.com_id 
+ where company.name='RED' )
+
+select id,
+case
+when id = '1' then 'Root'
+when id = '2' then 'Inner'
+else 'Leaf' end as type from tree;
+
+select actor_id,director_id from actordirector group by actor_id,director_id having count(timestamp)>2
+
+select product_id , product_name from product where product_id not in(select p.product_id from Product p left join Sales s 
+    on p.product_id=s.product_id 
+    where s.sale_date <date('2019-01-01') 
+    or
+    s.sale_date >date('2019-03-31')  )
+
+select activity_date as day,count(distinct user_id) as active_users from activity where activity_date <= '2019-07-27' and activity_date > '2019-06-25' group by activity_date;
+
+select distinct author_id as id from views where viewer_id = author_id order by id;
+
+--ADDING PRICES IF SELL AND SUBTRACTING IF BUY--
+select stock_name,SUM(CASE 
+When operation = 'Sell' then price
+ELSE -price end ) as capital_gain_loss from stocks group by stock_name;
+
+--IFNULL-----------------------------------------------------------------------------------
+select u.name,sum(ifnull(r.distance,0)) as travelled_distance from users u left join rides r
+on u.id = r.user_id group by u.name order by travelled_distance desc,u.name;
+
+----GROUP_CONCAT-----------------------------------------------------------
+SELECT sell_date, count(distinct product) as num_sold,
+group_concat(distinct(product) SEPARATOR ',') as products FROM ACTIVITIES group by sell_date;
