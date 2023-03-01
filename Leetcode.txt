@@ -1,6 +1,8 @@
 select name,population,area from world where population > 25000000 or area >3000000;
 select product_id from products where low_fats='Y' and recyclable='Y';
 
+select customer_number from orders group by customer_number order by count(*) desc limit 1; -- to count and check repeat number of customer 
+
 SELECT name from Customer where referee_id != 2 or referee_id is null;
 
 select name as Customers from Customers where id not in (select customerid from orders)
@@ -19,7 +21,7 @@ else 'Leaf' end as type from tree;
 
 select actor_id,director_id from actordirector group by actor_id,director_id having count(timestamp)>2
 
-select product_id , product_name from product where product_id not in(select p.product_id from Product p left join Sales s 
+select product_id , product_name from product where product_id not in(select p.product_id from Product p join Sales s 
     on p.product_id=s.product_id 
     where s.sale_date <date('2019-01-01') 
     or

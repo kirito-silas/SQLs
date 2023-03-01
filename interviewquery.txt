@@ -1,0 +1,46 @@
+easy--
+Given a table called employees, get the largest salary of any employee by department
+SELECT department,max(salary) as largest_salary FROM employees group by department order by salary desc;
+
+Write a query to get the duration (in minutes) of each ride longer than two hours. Sort the results by duration in descending order.
+select timestampdiff(minute,start_dt,end_dt) as duration_minutes from rides where timestampdiff(minute,start_dt,end_dt) > 120 order by duration_minutes desc;
+
+If the transaction is shipped during the membership period, column is_member should have the value Y. If not, the column should have the value N.
+Hint: You may assume that customer_id is unique and that shipments are made only to registered customers.
+select s.shipment_id,s.ship_date,c.customer_id,case
+when c.membership_end_date > s.ship_date then "Y"
+when c.membership_end_date < s.ship_date then "N"
+end as is_member ,s.quantity from customers c join shipments s on
+c.customer_id=s.customer_id;
+
+Write a query to get the average commute time (in minutes) for each commuter in New York and the average commute time (in minutes) across all commuters in New York.
+SELECT distinct commuter_id,
+floor( AVG(TIMESTAMPDIFF(MINUTE,start_dt,end_dt)) OVER (PARTITION BY commuter_id)) AS avg_commuter_time,
+floor( AVG(TIMESTAMPDIFF(MINUTE,start_dt,end_dt)) over ()) AS avg_time 
+from rides where city='NY';
+
+
+Given a table of transactions and a table of users, write a query to determine if users tend to order more to their primary address versus other addresses.
+Note: Return the percentage of transactions ordered to their home address as home_address_percent.
+select avg(if(t.shipping_address = u.address, 1, 0)) as home_address_percent
+from transactions t join users u on t.user_id = u.id ;
+
+Write a query to identify customers who placed more than three transactions each in both 2019 and 2020.
+with temp as(select count(user_id) as counts,user_id from transactions group by user_id)
+select u.name as customer_name from users u join temp te on u.id=te.user_id
+where te.counts>3;
+--same with different logic
+select name as customer_name from (
+    select t.user_id,
+    sum(if(year(t.created_at)=2019,1,0)) as t2019,
+    sum(if(year(t.created_at)=2020,1,0)) as t2020
+    from transactions t group by t.user_id
+) c join users on c.user_id=users.id
+ where t2019>3 and t2020>3;
+
+
+Write a query to show the number of users, number of transactions placed, and total order amount per month in the year 2020. Assume that we are only interested in the monthly reports for a single year (January-December).
+select month(t.created_at)as month,count(distinct t.user_id) as num_customers,
+count(t.id) as num_orders,sum(p.price*t.quantity) as order_amt
+from transactions t join products p on t.product_id=p.id
+where year(t.created_at) = 2020 group by month;
